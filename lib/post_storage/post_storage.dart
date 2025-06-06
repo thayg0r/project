@@ -13,8 +13,7 @@ class PostStorage {
     return [];
   }
 
-  // Salvar postagens
-  static Future<void> savePostagens(List<Map<String, String>> postagens) async {
+  static Future<void> savePosts(List<Map<String, String>> postagens) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('postagens', json.encode(postagens));
   }

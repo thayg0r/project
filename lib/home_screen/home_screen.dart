@@ -3,6 +3,7 @@ import 'package:project/scheduling_screen/scheduling_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:project/post_storage/post_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,10 +31,10 @@ class HomeScreenState extends State<HomeScreen> {
       _focusedDay = _lastDay;
     }
 
-    _loadPostagens();
+    _loadPosts();
   }
 
-  _loadPostagens() async {
+  _loadPosts() async {
     final storedData = await PostStorage.loadPostagens();
     setState(() {
       _posts = storedData;
@@ -54,7 +55,7 @@ class HomeScreenState extends State<HomeScreen> {
       _posts.removeAt(index);
     });
 
-    await PostStorage.savePostagens(_posts);
+    await PostStorage.savePosts(_posts);
   }
 
   Future<void> _showConfirmationDialog(int index) async {
@@ -68,7 +69,7 @@ class HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _loadPostagens();
+                _loadPosts();
               },
               child: Text("Cancelar"),
             ),
@@ -80,7 +81,7 @@ class HomeScreenState extends State<HomeScreen> {
                   context,
                 ).showSnackBar(SnackBar(content: Text('Postagem excluída!')));
 
-                _loadPostagens();
+                _loadPosts();
               },
               child: Text("Confirmar"),
             ),
@@ -139,7 +140,7 @@ class HomeScreenState extends State<HomeScreen> {
                   },
                   calendarStyle: CalendarStyle(
                     todayDecoration: BoxDecoration(
-                      color: Color(0xFF3B5CFF),
+                      color: Color(0xFF74B1EE),
                       shape: BoxShape.circle,
                     ),
                     selectedDecoration: BoxDecoration(
@@ -147,6 +148,7 @@ class HomeScreenState extends State<HomeScreen> {
                       shape: BoxShape.circle,
                     ),
                   ),
+
                   headerStyle: HeaderStyle(
                     titleCentered: true,
                     titleTextStyle: TextStyle(
@@ -198,181 +200,218 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _posts.length,
-                itemBuilder: (context, index) {
-                  final post = _posts[index];
-                  DateTime postDate = DateTime.parse(post['date']!);
-                  String formattedDate = DateFormat(
-                    'dd/MM/yyyy',
-                  ).format(postDate);
-                  String formattedTime = DateFormat('HH:mm').format(postDate);
-                  return Dismissible(
-                    key: Key(post['title'] ?? 'Sem Título'),
-                    direction: DismissDirection.endToStart,
-                    confirmDismiss: (direction) async {
-                      String titulo = post['title'] ?? 'Sem Título';
-                      String data = formattedDate;
-                      String hora = formattedTime;
-                      bool? confirm = await showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Confirmação"),
-                            content: Text(
-                              'Tem certeza que deseja excluir a postagem "$titulo" de $data às $hora?',
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                  _loadPostagens();
-                                },
-                                child: Text("Cancelar"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                                child: Text("Confirmar"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                      return confirm == true;
-                    },
-                    onDismissed: (direction) {
-                      _deletePost(index);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Postagem excluída!')),
-                      );
-                      _loadPostagens();
-                    },
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(right: 20),
-                      child: Icon(Icons.delete, color: Colors.white, size: 30),
-                    ),
-                    child: Card(
-                      margin: EdgeInsets.all(8),
-                      color: Colors.transparent,
-                      elevation: 0,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.only(left: 10),
-                        title: Text(post['title'] ?? 'Sem Título'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(post['description'] ?? 'Sem Descrição'),
-                            SizedBox(height: 2),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFF3B5CFF),
-                                borderRadius: BorderRadius.circular(44.0),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    color: Colors.white,
-                                    size: 14,
+
+              Builder(
+                builder: (context) {
+                  final postsDoDia =
+                      _posts.where((post) {
+                        if (post['date'] == null) return false;
+                        final postDate = DateTime.parse(post['date']!);
+                        return postDate.year == _selectedDay.year &&
+                            postDate.month == _selectedDay.month &&
+                            postDate.day == _selectedDay.day;
+                      }).toList();
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: postsDoDia.length,
+                    itemBuilder: (context, index) {
+                      final post = postsDoDia[index];
+                      DateTime postDate = DateTime.parse(post['date']!);
+                      String formattedDate = DateFormat(
+                        'dd/MM/yyyy',
+                      ).format(postDate);
+                      String formattedTime = DateFormat(
+                        'HH:mm',
+                      ).format(postDate);
+                      return Dismissible(
+                        key: Key(post['title'] ?? 'Sem Título'),
+                        direction: DismissDirection.endToStart,
+                        confirmDismiss: (direction) async {
+                          String titulo = post['title'] ?? 'Sem Título';
+                          String data = formattedDate;
+                          String hora = formattedTime;
+                          bool? confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Confirmação"),
+                                content: Text(
+                                  'Tem certeza que deseja excluir a postagem "$titulo" de $data às $hora?',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                      _loadPosts();
+                                    },
+                                    child: Text("Cancelar"),
                                   ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    formattedDate,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    formattedTime,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Text("Confirmar"),
                                   ),
                                 ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        leading:
-                            post['image'] != null
-                                ? Image.asset(
-                                  post['image']!,
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                )
-                                : Icon(Icons.image),
-                        trailing: Padding(
-                          padding: const EdgeInsets.only(bottom: 25),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.more_vert,
-                              size: 18,
-                              color: Colors.grey[700],
-                            ),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return SafeArea(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            Icons.edit,
-                                            color: Color(0xFF3B5CFF),
-                                          ),
-                                          title: Text('Editar'),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (context) =>
-                                                        SchedulingScreen(),
-                                              ),
-                                            ).then((_) {
-                                              _loadPostagens();
-                                            });
-                                          },
-                                        ),
-                                        ListTile(
-                                          leading: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          title: Text('Excluir'),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _showConfirmationDialog(index);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
                               );
                             },
+                          );
+                          return confirm == true;
+                        },
+                        onDismissed: (direction) {
+                          _deletePost(_posts.indexOf(post));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Postagem excluída!')),
+                          );
+                          _loadPosts();
+                        },
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 20),
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                            size: 30,
                           ),
                         ),
-                      ),
-                    ),
+                        child: Card(
+                          margin: EdgeInsets.all(8),
+                          color: Colors.transparent,
+                          elevation: 0,
+                          child: ListTile(
+                            contentPadding: EdgeInsets.only(left: 10),
+                            title: Text(
+                              post['title'] ?? 'Sem Título',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(post['description'] ?? 'Sem Descrição'),
+                                SizedBox(height: 2),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF3B5CFF),
+                                    borderRadius: BorderRadius.circular(44.0),
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/clock.svg',
+                                        width: 13,
+                                        height: 13,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        formattedTime,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            leading:
+                                post['image'] != null
+                                    ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        post['image']!,
+                                        width: 60,
+                                        height: 62,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                    : Icon(Icons.image),
+                            trailing: Padding(
+                              padding: const EdgeInsets.only(bottom: 25),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  size: 18,
+                                  color: Colors.grey[700],
+                                ),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return SafeArea(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ListTile(
+                                              leading: SvgPicture.asset(
+                                                'assets/icons/edit.svg',
+                                                width: 24,
+                                                height: 24,
+                                                color: Color(0xFF3B5CFF),
+                                              ),
+                                              title: Text('Editar'),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            SchedulingScreen(),
+                                                  ),
+                                                ).then((_) {
+                                                  _loadPosts();
+                                                });
+                                              },
+                                            ),
+                                            ListTile(
+                                              leading: SvgPicture.asset(
+                                                'assets/icons/trash.svg',
+                                                width: 24,
+                                                height: 24,
+                                                color: Colors.red,
+                                              ),
+                                              title: Text('Excluir'),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                _showConfirmationDialog(
+                                                  _posts.indexOf(post),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
+              SizedBox(height: 80),
             ],
           ),
         ),
@@ -384,7 +423,7 @@ class HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(builder: (context) => SchedulingScreen()),
               ).then((_) {
-                _loadPostagens();
+                _loadPosts();
               });
             },
             backgroundColor: Color(0xFF3B5CFF),
@@ -395,7 +434,7 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        bottomNavigationBar: Container(height: 84, color: Color(0xFF3B5CFF)),
+        bottomNavigationBar: Container(height: 64, color: Color(0xFF3B5CFF)),
       ),
     );
   }
