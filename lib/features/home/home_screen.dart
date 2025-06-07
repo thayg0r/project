@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project/scheduling_screen/scheduling_screen.dart';
+import 'package:project/scheduling/scheduling_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:project/post_storage/post_storage.dart';
+import 'package:project/data/local/post_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -58,13 +58,20 @@ class HomeScreenState extends State<HomeScreen> {
     await PostStorage.savePosts(_posts);
   }
 
-  Future<void> _showConfirmationDialog(int index) async {
+  Future<void> _showConfirmationDialog(
+    int index,
+    String titulo,
+    String data,
+    String hora,
+  ) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Confirmação"),
-          content: Text("Tem certeza que deseja excluir esta postagem?"),
+          content: Text(
+            'Tem certeza que deseja excluir a postagem "$titulo" de $data às $hora?',
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -77,10 +84,9 @@ class HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost(index);
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Postagem excluída!')));
-
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Postagem excluída com sucesso!')),
+                );
                 _loadPosts();
               },
               child: Text("Confirmar"),
@@ -148,7 +154,6 @@ class HomeScreenState extends State<HomeScreen> {
                       shape: BoxShape.circle,
                     ),
                   ),
-
                   headerStyle: HeaderStyle(
                     titleCentered: true,
                     titleTextStyle: TextStyle(
@@ -200,7 +205,6 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-
               Builder(
                 builder: (context) {
                   final postsDoDia =
@@ -391,8 +395,16 @@ class HomeScreenState extends State<HomeScreen> {
                                               title: Text('Excluir'),
                                               onTap: () {
                                                 Navigator.pop(context);
+                                                String titulo =
+                                                    post['title'] ??
+                                                    'Sem Título';
+                                                String data = formattedDate;
+                                                String hora = formattedTime;
                                                 _showConfirmationDialog(
                                                   _posts.indexOf(post),
+                                                  titulo,
+                                                  data,
+                                                  hora,
                                                 );
                                               },
                                             ),

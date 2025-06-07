@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project/home_screen/home_screen.dart';
-import 'package:project/post_storage/post_storage.dart';
+import 'package:project/features/home/presentation/home_screen.dart';
+import 'package:project/data/local/post_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -193,48 +193,62 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            'assets/images/image1.jpg',
-                            width: 120,
-                            height: 160,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        // ClipRRect(
-                        //   borderRadius: BorderRadius.circular(10.0),
-                        //   child: Image.asset(
-                        //     'assets/images/image2.jpg',
-                        //     width: 120,
-                        //     height: 160,
-                        //     fit: BoxFit.cover,
-                        //   ),
-                        // ),
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: ClipRRect(
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
-                            child: Container(
+                            child: Image.asset(
+                              'assets/images/image1.jpg',
                               width: 120,
                               height: 160,
-                              color: Color(0x23BFBFBF),
-                              child:
-                                  imagePath != null
-                                      ? Image.file(
-                                        File(imagePath!),
-                                        fit: BoxFit.cover,
-                                        width: 120,
-                                        height: 160,
-                                      )
-                                      : Icon(Icons.add_a_photo),
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.asset(
+                              'assets/images/image2.jpg',
+                              width: 120,
+                              height: 160,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.asset(
+                              'assets/images/image2.jpg',
+                              width: 120,
+                              height: 160,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: _pickImage,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Container(
+                                width: 120,
+                                height: 160,
+                                color: Color(0x23BFBFBF),
+                                child:
+                                    imagePath != null
+                                        ? Image.file(
+                                          File(imagePath!),
+                                          fit: BoxFit.cover,
+                                          width: 120,
+                                          height: 160,
+                                        )
+                                        : Icon(Icons.add_a_photo),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 20),
                     Align(
@@ -384,13 +398,13 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                   ],
                 ),
               ),
-              Container(
-                height: 64,
-                width: double.infinity,
-                color: Color(0xFF3B5CFF),
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: Container(
+          height: 64,
+          width: double.infinity,
+          color: Color(0xFF3B5CFF),
         ),
       ),
     );
