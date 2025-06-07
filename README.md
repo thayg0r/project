@@ -25,17 +25,13 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 
 ## 🖼️ Pré-visualização
 
-### Tela de Agendamento
-
-<img src="screenshots/agendamento.png" width="350" />
-
-### Calendário com Postagens
+### Tela Postagens Agendadas
 
 <img src="assets/images/postagens-agendadas.png" width="300" height="500" />
 
-### Confirmação de Agendamento
+### Tela Agendar Postagem
 
-<img src="screenshots/confirmacao.png" width="350" />
+<img src="assets/images/agendar-postagem.png" width="350" />
 
 ---
 
