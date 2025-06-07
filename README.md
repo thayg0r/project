@@ -31,7 +31,7 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 
 ### Calendário com Postagens
 
-![Calendário](screenshots/calendario.png)
+![Calendário](assets\images\postagens-agendadas.png)
 
 ### Confirmação de Agendamento
 
