@@ -2,6 +2,8 @@
 
 Aplicativo Flutter que permite agendar postagens localmente com título, descrição, data e hora. Ideal para organizar publicações futuras sem depender de conexão externa com redes sociais. As postagens são armazenadas no dispositivo e exibidas em um calendário interativo, facilitando a visualização e o controle do conteúdo agendado.
 
+---
+
 ## 🎯 Objetivo
 
 Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser publicado.
@@ -18,6 +20,22 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 - [x] Suporte à edição e exclusão de postagens
 - [x] Uso de `setState` para gerenciamento de estado
 - [x] Organização modular dos arquivos
+
+---
+
+## 🖼️ Pré-visualização
+
+### Tela de Agendamento
+
+![Tela de Agendamento](screenshots/agendamento.png)
+
+### Calendário com Postagens
+
+![Calendário](screenshots/calendario.png)
+
+### Confirmação de Agendamento
+
+![Confirmação](screenshots/confirmacao.png)
 
 ---
 
