@@ -20,6 +20,7 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 - [x] Suporte à edição e exclusão de postagens
 - [x] Uso de `setState` para gerenciamento de estado
 - [x] Organização modular dos arquivos
+- [x] Swipe (deslizar) para deletar agendamento
 
 ---
 
@@ -31,7 +32,7 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 
 ### Tela Agendar Postagem
 
-<img src="assets/images/agendar-postagem.png" width="350" />
+<img src="assets/images/agendar-postagem.png" width="300" height="500" />
 
 ---
 
