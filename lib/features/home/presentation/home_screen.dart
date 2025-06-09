@@ -231,54 +231,86 @@ class HomeScreenState extends State<HomeScreen> {
                       ).format(postDate);
                       return Dismissible(
                         key: Key(post['title'] ?? 'Sem Título'),
-                        direction: DismissDirection.endToStart,
+                        direction:
+                            DismissDirection
+                                .horizontal, // Permite ambos os lados
                         confirmDismiss: (direction) async {
-                          String titulo = post['title'] ?? 'Sem Título';
-                          String data = formattedDate;
-                          String hora = formattedTime;
-                          bool? confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Confirmação"),
-                                content: Text(
-                                  'Tem certeza que deseja excluir a postagem "$titulo" de $data às $hora?',
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                      _loadPosts();
-                                    },
-                                    child: Text("Cancelar"),
+                          if (direction == DismissDirection.endToStart) {
+                            // Swipe para esquerda: excluir
+                            String titulo = post['title'] ?? 'Sem Título';
+                            String data = formattedDate;
+                            String hora = formattedTime;
+                            bool? confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirmação"),
+                                  content: Text(
+                                    'Tem certeza que deseja excluir a postagem "$titulo" de $data às $hora?',
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                    child: Text("Confirmar"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          return confirm == true;
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                        _loadPosts();
+                                      },
+                                      child: Text("Cancelar"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: Text("Confirmar"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return confirm == true;
+                          } else if (direction == DismissDirection.startToEnd) {
+                            // Swipe para direita: editar
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => SchedulingScreen(post: post),
+                              ),
+                            ).then((_) {
+                              _loadPosts();
+                            });
+                            return false; // Não remove o item da lista
+                          }
+                          return false;
                         },
                         onDismissed: (direction) {
-                          _deletePost(_posts.indexOf(post));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Postagem excluída!')),
-                          );
-                          _loadPosts();
+                          if (direction == DismissDirection.endToStart) {
+                            _deletePost(_posts.indexOf(post));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Postagem excluída!')),
+                            );
+                            _loadPosts();
+                          }
                         },
                         background: Container(
+                          color: Colors.green,
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 20),
+                          child: SvgPicture.asset(
+                            'assets/icons/edit.svg',
+                            width: 30,
+                            height: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                        secondaryBackground: Container(
                           color: Colors.red,
                           alignment: Alignment.centerRight,
                           padding: EdgeInsets.only(right: 20),
-                          child: Icon(
-                            Icons.delete,
+                          child: SvgPicture.asset(
+                            'assets/icons/trash.svg',
+                            width: 30,
+                            height: 30,
                             color: Colors.white,
-                            size: 30,
                           ),
                         ),
                         child: Card(
@@ -378,7 +410,9 @@ class HomeScreenState extends State<HomeScreen> {
                                                   MaterialPageRoute(
                                                     builder:
                                                         (context) =>
-                                                            SchedulingScreen(),
+                                                            SchedulingScreen(
+                                                              post: post,
+                                                            ),
                                                   ),
                                                 ).then((_) {
                                                   _loadPosts();

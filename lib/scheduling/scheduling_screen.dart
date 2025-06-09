@@ -7,7 +7,10 @@ import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SchedulingScreen extends StatefulWidget {
-  const SchedulingScreen({super.key});
+  final Map<String, String>? post; // Adiciona parâmetro para receber o post
+
+  SchedulingScreen({super.key, this.post});
+
   @override
   SchedulingScreenState createState() => SchedulingScreenState();
 }
@@ -17,14 +20,38 @@ class SchedulingScreenState extends State<SchedulingScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   List<Map<String, String>> _posts = [];
   String? imagePath;
-
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker =
+      ImagePicker(); // Adicione esta linha no início da classe SchedulingScreenState
 
   @override
   void initState() {
     super.initState();
+
+    // Se estiver editando, preenche os campos com os dados do post
+    if (widget.post != null) {
+      _titleController.text = widget.post!['title'] ?? '';
+      _descriptionController.text = widget.post!['description'] ?? '';
+      if (widget.post != null && widget.post!['date'] != null) {
+        _selectedDate = DateTime.parse(widget.post!['date']!);
+        _dateController.text = getFormattedDate(_selectedDate);
+      }
+      if (widget.post!['date'] != null) {
+        _selectedDate = DateTime.parse(widget.post!['date']!);
+      }
+      if (widget.post!['time'] != null) {
+        _timeController.text = widget.post!['time']!;
+      } else {
+        // Caso o horário esteja embutido na data
+        _timeController.text = TimeOfDay.fromDateTime(
+          _selectedDate,
+        ).format(context);
+      }
+      imagePath = widget.post!['image'];
+    }
+
     _loadPost();
   }
 
@@ -43,11 +70,26 @@ class SchedulingScreenState extends State<SchedulingScreen> {
         'description': _descriptionController.text,
         'date': _selectedDate.toIso8601String(),
         'time': _timeController.text,
-        'image': 'assets/images/image1.jpg',
+        'image': imagePath ?? 'assets/images/image1.jpg',
       };
 
       setState(() {
-        _posts.add(newPost);
+        if (widget.post != null) {
+          // Atualiza o post existente
+          int index = _posts.indexWhere(
+            (p) =>
+                p['title'] == widget.post!['title'] &&
+                p['description'] == widget.post!['description'] &&
+                p['date'] == widget.post!['date'] &&
+                p['time'] == widget.post!['time'],
+          );
+          if (index != -1) {
+            _posts[index] = newPost;
+          }
+        } else {
+          // Cria novo post
+          _posts.add(newPost);
+        }
       });
 
       PostStorage.savePosts(_posts);
@@ -80,6 +122,7 @@ class SchedulingScreenState extends State<SchedulingScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        _dateController.text = getFormattedDate(_selectedDate);
       });
     }
   }
@@ -313,9 +356,7 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                       children: [
                         Expanded(
                           child: TextField(
-                            controller: TextEditingController(
-                              text: getFormattedDate(_selectedDate),
-                            ),
+                            controller: _dateController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -335,6 +376,8 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                 vertical: 16,
                               ),
+                              hintText: "Data",
+                              hintStyle: TextStyle(color: Colors.black),
                             ),
                             readOnly: true,
                             onTap: () => _selectDate(context),
