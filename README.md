@@ -16,7 +16,7 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 - [x] Suporte à edição e exclusão de postagens
 - [x] Uso de `setState` para gerenciamento de estado
 - [x] Organização modular dos arquivos
-- [x] Swipe (deslizar) para deletar agendamento
+- [x] Swipe (deslizar) para deletar/editar agendamento
 
 ## 🖼️ Pré-visualização
 
