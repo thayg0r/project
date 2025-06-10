@@ -8,15 +8,15 @@ Permitir que o usuário agende uma postagem contendo a descrição e fotos a ser
 
 ## ✅ Funcionalidades implementadas
 
-- [x] Tela de agendamento com título, descrição, data e hora
-- [x] Botão de "Agendar"
-- [x] Lista de postagens agendadas para a data selecionada
-- [x] Exibição de indicadores visuais no calendário (bolinhas abaixo dos dias com postagens agendadas)
-- [x] Persistência local com `SharedPreferences`
-- [x] Suporte à edição e exclusão de postagens
-- [x] Uso de `setState` para gerenciamento de estado
-- [x] Organização modular dos arquivos
-- [x] Swipe (deslizar) para deletar agendamento
+- [x] Tela de agendamento com título, descrição, data e hora;
+- [x] Botão de "Agendar";
+- [x] Lista de postagens agendadas para a data selecionada;
+- [x] Exibição de indicadores visuais no calendário (bolinhas abaixo dos dias com postagens agendadas);
+- [x] Persistência local com `SharedPreferences`;
+- [x] Suporte à edição e exclusão de postagens;
+- [x] Uso de `setState` para gerenciamento de estado;
+- [x] Organização modular dos arquivos;
+- [x] Swipe (deslizar) para deletar/editar agendamento.
 
 ## 🖼️ Pré-visualização
 
