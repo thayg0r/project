@@ -146,11 +146,29 @@ class HomeScreenState extends State<HomeScreen> {
                   },
                   calendarStyle: CalendarStyle(
                     todayDecoration: BoxDecoration(
-                      color: Color(0xFF74B1EE),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0x80F58529),
+                          Color(0x80DD2A7B),
+                          Color(0x808134AF),
+                          Color(0x80515BD4),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     selectedDecoration: BoxDecoration(
-                      color: Color(0xFF3B5CFF),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFF58529),
+                          Color(0xFFDD2A7B),
+                          Color(0xFF8134AF),
+                          Color(0xFF515BD4),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -183,7 +201,16 @@ class HomeScreenState extends State<HomeScreen> {
                               height: 6,
                               width: 6,
                               decoration: BoxDecoration(
-                                color: Color(0xFF3B5CFF),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFFF58529),
+                                    Color(0xFFDD2A7B),
+                                    Color(0xFF8134AF),
+                                    Color(0xFF515BD4),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -231,12 +258,9 @@ class HomeScreenState extends State<HomeScreen> {
                       ).format(postDate);
                       return Dismissible(
                         key: Key(post['title'] ?? 'Sem Título'),
-                        direction:
-                            DismissDirection
-                                .horizontal, // Permite ambos os lados
+                        direction: DismissDirection.horizontal,
                         confirmDismiss: (direction) async {
                           if (direction == DismissDirection.endToStart) {
-                            // Swipe para esquerda: excluir
                             String titulo = post['title'] ?? 'Sem Título';
                             String data = formattedDate;
                             String hora = formattedTime;
@@ -268,7 +292,6 @@ class HomeScreenState extends State<HomeScreen> {
                             );
                             return confirm == true;
                           } else if (direction == DismissDirection.startToEnd) {
-                            // Swipe para direita: editar
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -278,7 +301,7 @@ class HomeScreenState extends State<HomeScreen> {
                             ).then((_) {
                               _loadPosts();
                             });
-                            return false; // Não remove o item da lista
+                            return false;
                           }
                           return false;
                         },
@@ -286,7 +309,9 @@ class HomeScreenState extends State<HomeScreen> {
                           if (direction == DismissDirection.endToStart) {
                             _deletePost(_posts.indexOf(post));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Postagem excluída!')),
+                              SnackBar(
+                                content: Text('Postagem excluída com sucesso!'),
+                              ),
                             );
                             _loadPosts();
                           }
@@ -333,7 +358,16 @@ class HomeScreenState extends State<HomeScreen> {
                                 SizedBox(height: 2),
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF3B5CFF),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFFF58529),
+                                        Color(0xFFDD2A7B),
+                                        Color(0xFF8134AF),
+                                        Color(0xFF515BD4),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
                                     borderRadius: BorderRadius.circular(44.0),
                                   ),
                                   padding: EdgeInsets.symmetric(horizontal: 5),
@@ -463,24 +497,54 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 82, right: 8),
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SchedulingScreen()),
-              ).then((_) {
-                _loadPosts();
-              });
-            },
-            backgroundColor: Color(0xFF3B5CFF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(44),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFF58529),
+                  Color(0xFFDD2A7B),
+                  Color(0xFF8134AF),
+                  Color(0xFF515BD4),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
-            child: Icon(Icons.add, color: Colors.white),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SchedulingScreen()),
+                ).then((_) {
+                  _loadPosts();
+                });
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(44),
+              ),
+              child: Icon(Icons.add, color: Colors.white),
+            ),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        bottomNavigationBar: Container(height: 64, color: Color(0xFF3B5CFF)),
+        bottomNavigationBar: Container(
+          height: 64,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFF58529),
+                Color(0xFFDD2A7B),
+                Color(0xFF8134AF),
+                Color(0xFF515BD4),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
     );
   }

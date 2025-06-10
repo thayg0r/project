@@ -267,7 +267,9 @@ class HomeScreenState extends State<HomeScreen> {
                         onDismissed: (direction) {
                           _deletePost(_posts.indexOf(post));
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Postagem excluída!')),
+                            SnackBar(
+                              content: Text('Postagem excluída com sucesso!'),
+                            ),
                           );
                           _loadPosts();
                         },

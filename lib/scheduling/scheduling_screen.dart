@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SchedulingScreen extends StatefulWidget {
-  final Map<String, String>? post; // Adiciona parâmetro para receber o post
+  final Map<String, String>? post;
 
   SchedulingScreen({super.key, this.post});
 
@@ -23,14 +23,13 @@ class SchedulingScreenState extends State<SchedulingScreen> {
   final TextEditingController _dateController = TextEditingController();
   List<Map<String, String>> _posts = [];
   String? imagePath;
-  final ImagePicker _picker =
-      ImagePicker(); // Adicione esta linha no início da classe SchedulingScreenState
+  final ImagePicker _picker = ImagePicker();
+  List<String> imagePaths = [];
 
   @override
   void initState() {
     super.initState();
 
-    // Se estiver editando, preenche os campos com os dados do post
     if (widget.post != null) {
       _titleController.text = widget.post!['title'] ?? '';
       _descriptionController.text = widget.post!['description'] ?? '';
@@ -44,7 +43,6 @@ class SchedulingScreenState extends State<SchedulingScreen> {
       if (widget.post!['time'] != null) {
         _timeController.text = widget.post!['time']!;
       } else {
-        // Caso o horário esteja embutido na data
         _timeController.text = TimeOfDay.fromDateTime(
           _selectedDate,
         ).format(context);
@@ -75,7 +73,6 @@ class SchedulingScreenState extends State<SchedulingScreen> {
 
       setState(() {
         if (widget.post != null) {
-          // Atualiza o post existente
           int index = _posts.indexWhere(
             (p) =>
                 p['title'] == widget.post!['title'] &&
@@ -87,7 +84,6 @@ class SchedulingScreenState extends State<SchedulingScreen> {
             _posts[index] = newPost;
           }
         } else {
-          // Cria novo post
           _posts.add(newPost);
         }
       });
@@ -110,7 +106,7 @@ class SchedulingScreenState extends State<SchedulingScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color(0xFF3B5CFF),
+              primary: Color(0xFF515BD4),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -135,7 +131,7 @@ class SchedulingScreenState extends State<SchedulingScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color(0xFF3B5CFF),
+              primary: Color(0xFF515BD4),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -162,10 +158,9 @@ class SchedulingScreenState extends State<SchedulingScreen> {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
     );
-
     if (pickedFile != null) {
       setState(() {
-        imagePath = pickedFile.path;
+        imagePaths.add(pickedFile.path);
       });
     }
   }
@@ -223,6 +218,17 @@ class SchedulingScreenState extends State<SchedulingScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/arrow-left.svg',
+              width: 24,
+              height: 24,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           centerTitle: true,
           title: Text(
             "Agendar postagem",
@@ -286,7 +292,25 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                                           width: 120,
                                           height: 160,
                                         )
-                                        : Icon(Icons.add_a_photo),
+                                        : ShaderMask(
+                                          shaderCallback: (Rect bounds) {
+                                            return LinearGradient(
+                                              colors: [
+                                                Color(0xFFF58529),
+                                                Color(0xFFDD2A7B),
+                                                Color(0xFF8134AF),
+                                                Color(0xFF515BD4),
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ).createShader(bounds);
+                                          },
+                                          child: Icon(
+                                            Icons.add_a_photo,
+                                            size: 24,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                               ),
                             ),
                           ),
@@ -366,11 +390,25 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                               fillColor: Color(0x23BFBFBF),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(12.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/calendar.svg',
-                                  width: 24,
-                                  height: 24,
-                                  color: Color(0xFF3B5CFF),
+                                child: ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      colors: [
+                                        Color(0xFFF58529),
+                                        Color(0xFFDD2A7B),
+                                        Color(0xFF8134AF),
+                                        Color(0xFF515BD4),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ).createShader(bounds);
+                                  },
+                                  child: SvgPicture.asset(
+                                    'assets/icons/calendar.svg',
+                                    width: 24,
+                                    height: 24,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               contentPadding: EdgeInsets.symmetric(
@@ -400,11 +438,25 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                               fillColor: Color(0x23BFBFBF),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(12.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/clock.svg',
-                                  width: 24,
-                                  height: 24,
-                                  color: Color(0xFF3B5CFF),
+                                child: ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      colors: [
+                                        Color(0xFFF58529),
+                                        Color(0xFFDD2A7B),
+                                        Color(0xFF8134AF),
+                                        Color(0xFF515BD4),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ).createShader(bounds);
+                                  },
+                                  child: SvgPicture.asset(
+                                    'assets/icons/clock.svg',
+                                    width: 24,
+                                    height: 24,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               contentPadding: EdgeInsets.symmetric(
@@ -420,21 +472,38 @@ class SchedulingScreenState extends State<SchedulingScreen> {
                       ],
                     ),
                     SizedBox(height: 36),
-                    ElevatedButton(
-                      onPressed: _showConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF3B5CFF),
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFF58529),
+                            Color(0xFFDD2A7B),
+                            Color(0xFF8134AF),
+                            Color(0xFF515BD4),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
+                        borderRadius: BorderRadius.circular(50.0),
                       ),
-                      child: Text(
-                        "Agendar",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      child: ElevatedButton(
+                        onPressed: _showConfirmationDialog,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                        ),
+                        child: Text(
+                          "Agendar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -447,7 +516,18 @@ class SchedulingScreenState extends State<SchedulingScreen> {
         bottomNavigationBar: Container(
           height: 64,
           width: double.infinity,
-          color: Color(0xFF3B5CFF),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFF58529),
+                Color(0xFFDD2A7B),
+                Color(0xFF8134AF),
+                Color(0xFF515BD4),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
       ),
     );
